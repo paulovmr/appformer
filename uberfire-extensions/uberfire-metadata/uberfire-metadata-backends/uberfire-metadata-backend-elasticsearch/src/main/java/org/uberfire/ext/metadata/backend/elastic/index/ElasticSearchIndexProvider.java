@@ -266,10 +266,12 @@ public class ElasticSearchIndexProvider implements IndexProvider {
             SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
             searchSourceBuilder.query(queryBuilder);
             if (sort != null) {
-                Arrays.stream(sort.getSort()).forEach(sortField -> {
-                    String field = sortField.getField();
-                    searchSourceBuilder.sort(field);
-                });
+                Arrays.stream(sort.getSort())
+                        .filter(sortField -> sortField.getField() != null)
+                        .forEach(sortField -> {
+                            String field = sortField.getField();
+                            searchSourceBuilder.sort(field);
+                        });
             }
             if (limit > 0 && limit <= ELASTICSEARCH_MAX_SIZE) {
                 searchSourceBuilder.size(limit);
